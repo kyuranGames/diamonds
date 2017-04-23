@@ -9,10 +9,9 @@ Sprites sprites;
 
 ArduboyPlaytune sound(arduboy.audio.enabled);
 
-void
-setup()
+void setup()
 {
-    // Serial.begin(9600);
+//    Serial.begin(9600);
     arduboy.begin();
     arduboy.setFrameRate(60);
     arduboy.setTextSize(1);
@@ -22,15 +21,13 @@ setup()
     sound.initChannel(PIN_SPEAKER_2);
 }
 
-void
-loop()
+void loop()
 {
     if (!arduboy.nextFrame()) {
         return;
     }
 
     arduboy.pollButtons();
-//    arduboy.clear();
 
     tick();
 
@@ -45,10 +42,9 @@ loop()
     }
 #endif
 
+
+//    Serial.write(arduboy.getBuffer(), 128 * 64 / 8);
     arduboy.display();
-
-
-
 
 
 } // loop

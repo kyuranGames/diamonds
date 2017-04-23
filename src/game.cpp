@@ -1,31 +1,24 @@
 #include "game.h"
-
 #include "resources.h"
 
-
-// Map
-
 void initLevel(void);
-
 
 #define NORM(x) (x > 0 ? x : -x);
 #define SGN(x)  (x > 0 ? 1 : -1);
 
-int current_level = 0;
+char current_level;
 int x5, y5;
 int FieldBegin_x;
 int FieldBegin_y;
 int FieldBegin_z;
 
-int direction;
+u8 direction;
 
 int transparent;
 
 int cur_shape, cur_x, cur_y, cur_rot, cur_pas;
 int pas_x, pas_y;
 
-
-int diamonds_mode;
 
 int practice;
 int score;
@@ -39,9 +32,10 @@ int nb_brick_end;
 
 int getready;
 
-int current_col;
+u8 current_col;
 
 int have_key;
+
 
 // taille du tableau
 #define FIELD_WIDTH  8
@@ -120,7 +114,7 @@ const unsigned char PROGMEM frameSequences[] = {
 
 void menuCredits()
 {
-    char diamondsR[88 * 3 + 2];
+    u8 diamondsR[88 * 3 + 2];
 
     arduboy.clear();
 
@@ -165,7 +159,7 @@ void menuCredits()
 
 void menuTitle()
 {
-    char diamondsR[88 * 3 + 2];
+    u8 diamondsR[88 * 3 + 2];
 
     sprites.drawOverwrite(0, 0, diammain, 0);
     sprites.drawOverwrite(7, 0, diamondsborder, 0);
@@ -176,9 +170,7 @@ void menuTitle()
         diamondsR[i] = diamondsR[i] & rng();
     }
 
-
-//        sprites.drawOverwrite(7, 0, diamondsR, 0);    // Doesn't work (image have to be in PROGMEM with this function)
-
+// sprites.drawOverwrite(7, 0, diamondsR, 0);    // Doesn't work (image have to be in PROGMEM with this function)
     drawOverwriteMaskDynamic(7, 0, diamondsR, 0);
 
 
@@ -242,11 +234,7 @@ void gameSetup()
 
     initLevel();
 
-    // arduboy.drawRect(2, 0, 100, 64, WHITE);
-    // arduboy.drawRect(4, 2, 96, 60, BLACK);
-
     draw();
-    arduboy.display();
 
     gameTick = &gameMain;
 }
@@ -287,37 +275,38 @@ int GetAction(int x, int y)
             retour = 1;
             break;
         case 2: // DUR (explose a la fin)
-            if (current_level != -1) {
-                if (nb_brick == 0) {
-                    score += 50;
-                    Field[y][x] = 0;
-                    nb_brick_end--;
-                    if (nb_brick_end == 0) {
-                        /*
-                         * int x0,y0;
-                         * int x1,y1;
-                         *
-                         * x0 = (int)(cur_level / 10);
-                         * y0 = (int)(cur_level - x0 * 10);
-                         *
-                         * for(x1=-1;x1<=FIELD_WIDTH;x1++) {
-                         *  Field[-1+y0*(FIELD_HEIGHT+5)+5][x1+x0*(FIELD_WIDTH+5)+5] = 0;
-                         *  Field[FIELD_HEIGHT+y0*(FIELD_HEIGHT+5)+5][x1+x0*(FIELD_WIDTH+5)+5] = 0;
-                         *  }
-                         * for(y1=-1;y1<=FIELD_HEIGHT;y1++) {
-                         *  Field[y1+y0*(FIELD_HEIGHT+5)+5][-1+x0*(FIELD_WIDTH+5)+5] = 0;
-                         *  Field[y1+y0*(FIELD_HEIGHT+5)+5][FIELD_WIDTH+x0*(FIELD_WIDTH+5)+5] = 0;
-                         *  }
-                         */
 
-                        //                    part = 2;
-                        //                  subpart = 1;  // Win
+            if (nb_brick == 0) {
+                score += 50;
+                Field[y][x] = 0;
+                nb_brick_end--;
+                if (nb_brick_end == 0) {
+                    /*
+                     * int x0,y0;
+                     * int x1,y1;
+                     *
+                     * x0 = (int)(cur_level / 10);
+                     * y0 = (int)(cur_level - x0 * 10);
+                     *
+                     * for(x1=-1;x1<=FIELD_WIDTH;x1++) {
+                     *  Field[-1+y0*(FIELD_HEIGHT+5)+5][x1+x0*(FIELD_WIDTH+5)+5] = 0;
+                     *  Field[FIELD_HEIGHT+y0*(FIELD_HEIGHT+5)+5][x1+x0*(FIELD_WIDTH+5)+5] = 0;
+                     *  }
+                     * for(y1=-1;y1<=FIELD_HEIGHT;y1++) {
+                     *  Field[y1+y0*(FIELD_HEIGHT+5)+5][-1+x0*(FIELD_WIDTH+5)+5] = 0;
+                     *  Field[y1+y0*(FIELD_HEIGHT+5)+5][FIELD_WIDTH+x0*(FIELD_WIDTH+5)+5] = 0;
+                     *  }
+                     */
 
-                        score = score + (bonus_time / FPS) * 25;
+                    //                    part = 2;
+                    //                  subpart = 1;  // Win
 
-                        current_level++;
-                        initLevel();
-                    }
+                    score = score + (bonus_time / FPS) * 25;
+
+                    current_level++;
+                    initLevel();
+
+                    arduboy.setRGBled(0, 255, 0);
                 }
 
             }
@@ -344,6 +333,8 @@ int GetAction(int x, int y)
             break;
         case 6: // BOUM
             //  Lost();
+
+            arduboy.setRGBled(255, 0, 0);
 
             life--;
             if (life > 0) {
@@ -411,11 +402,7 @@ int GetAction(int x, int y)
             retour = 1;
             break;
         case 16:
-            if (current_level != -1) { // Si on est dans le jeu, on rebondit
-                retour = 1;
-            } else {
-                retour = 0;
-            }
+            retour = 1;
     } // switch
 
     if (retour) {
@@ -424,19 +411,11 @@ int GetAction(int x, int y)
 
     return retour;
 } // GetAction
+
+
 int TestMove(int x, int y)
 {
     int coli;
-
-    /*
-     * {
-     *  char line[32];
-     *  sprintf(line, "Testmove: %d,%d", x / SIZE_X, y / SIZE_Y);
-     *  Serial.println(line);
-     * }
-     */
-
-
 
     // 84
     // 12 // Size_x:12, size_y:6
@@ -517,95 +496,24 @@ void handleBall(void)
         bonus_time--;
     }
 
-
-    // Verify Level
-
-    /*
-     * int x0,y0;
-     *
-     *
-     * x0 = ((cur_x/16)/SIZE_X) / (FIELD_WIDTH+5);
-     * y0 = ((cur_y/16)/SIZE_Y) / (FIELD_HEIGHT+5);
-     *
-     * if ( ( (((cur_x/16)/SIZE_X)%(FIELD_WIDTH+5)) >= 5) &
-     *   ( (((cur_y/16)/SIZE_Y)%(FIELD_HEIGHT+5)) >= 5) ) {
-     *
-     * if (cur_level == -1) {
-     *  diamonds_mode = 1;
-     *  current_col = 0;
-     *  direction = 1;
-     *  transparent = 1;
-     *  cur_level = x0*10+y0;
-     *  pas_y = SGN(pas_y);
-     *  pas_y = pas_y * (75/FPS) * 16;
-     * }
-     * } else {
-     * cur_level = -1;
-     * diamonds_mode = 0;
-     * }
-     *
-     */
-
-    // Move
-
-    //     3
-    //    120
-
-    // if (diamonds_mode == 0) {
-
-
-    //     if (arduboy.pressed(RIGHT_BUTTON)) {
-    //         if (pas_x <= 0) pas_x = 16;
-    //         pas_x++;
-    //         if (pas_x > 32) pas_x = 32;
-    //     } else if (arduboy.pressed(LEFT_BUTTON)) {
-    //         if (pas_x >= 0) pas_x = -16;
-    //         pas_x--;
-    //         if (pas_x < -32) pas_x = -32;
-    //     } else {
-    //         // if (pas_x > 0) pas_x = pas_x - (pas_x+1) / 2;
-    //         // if (pas_x < 0) pas_x = pas_x - (pas_x-1) / 2;
-    //         if (pas_x > 0) pas_x--;
-    //         if (pas_x < 0) pas_x++;
-    //     }
-
-
-    //     if (arduboy.pressed(UP_BUTTON)) {
-    //         if (pas_y <= 0) pas_y = 32;
-    //         pas_y++;
-    //         if (pas_y > 64) pas_y = 64;
-    //     } else if (arduboy.pressed(DOWN_BUTTON)) {
-    //         if (pas_y >= 0) pas_y = -32;
-    //         pas_y--;
-    //         if (pas_y < -64) pas_y = -64;
-    //     } else {
-    //         // if (pas_y > 0) pas_y = pas_y - (pas_y+1) / 2;
-    //         // if (pas_y < 0) pas_y = pas_y - (pas_y-1) / 2;
-    //         if (pas_y > 0) pas_y--;
-    //         if (pas_y < 0) pas_y++;
-    //     }
-
-    // } else {
-        if (arduboy.pressed(RIGHT_BUTTON)) {
-            if (pas_x == 0) {
-                pas_x = 24;
-            } else if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
-        } else if (arduboy.pressed(LEFT_BUTTON)) {
-            if (pas_x == 0) {
-                pas_x = -24;
-            } else if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
-        } else {
-            if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
-            if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
-        }
+    if (arduboy.pressed(RIGHT_BUTTON)) {
+        if (pas_x == 0) {
+            pas_x = 24;
+        } else if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
+    } else if (arduboy.pressed(LEFT_BUTTON)) {
+        if (pas_x == 0) {
+            pas_x = -24;
+        } else if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
+    } else {
+        if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
+        if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
+    }
     // }
 
     if (TestMove((cur_x + pas_x) / 16, (cur_y + pas_y) / 16) == 1) {
         cur_x += pas_x;
         cur_y += pas_y;
     }
-
-
 
 
 } // handleBall
@@ -619,16 +527,6 @@ void initLevel(void)
 
     x5 = ((str[0] - '0') + (str[1] - '0') * 16 - 5) / 12;
     y5 = ((str[2] - '0') + (str[3] - '0') * 16 - 5) / 6;
-
-    /*
-     * {
-     *  char line[32];
-     *  sprintf(line, "Begin 5: %d,%d", x5, y5);
-     *  Serial.println(line);
-     * }
-     */
-
-
 
     nb_brick = 0;
     nb_brick_end = 0;
@@ -698,14 +596,6 @@ void initLevel(void)
 
     // 240, 96  -> 15, 6
 
-    /*
-     * {
-     *  char line[32];
-     *  sprintf(line, "Begin: %d,%d", FieldBegin_x, FieldBegin_y);
-     *  Serial.println(line);
-     * }
-     */
-
     cur_x = FieldBegin_x;
     cur_y = FieldBegin_y;
     if (FieldBegin_z == 1) {
@@ -714,10 +604,7 @@ void initLevel(void)
         pas_y = 16;
     }
 
-
     bonus_time = FULLBONUS;
-
-    diamonds_mode = 1;
 
     current_col = 0;
 
@@ -739,7 +626,6 @@ void gameMain()
 {
     sprites.drawOverwrite(0, 0, diammain, 0);
 
-
     char line[3];
     sprintf(line, "%02d", current_level + 1);
 
@@ -755,6 +641,10 @@ void gameMain()
         getready--;
 
         sprites.drawOverwrite(2 + (96 - 72) / 2, 2 + (60 - 15) / 2, diamgetready, 0);
+
+        if (getready == 0) {
+            arduboy.setRGBled(0, 0, 0);
+        }
 
     } else {
 
@@ -799,25 +689,28 @@ void gameMain()
     }
 #endif
 
-
     if ((arduboy.justPressed(UP_BUTTON)) && (practice)) {
         if (current_level > 0) {
             current_level--;
-            initLevel();
+        } else {
+            current_level = NBLEVEL - 1;
         }
+        initLevel();
     }
+
     if ((arduboy.justPressed(DOWN_BUTTON)) && (practice)) {
         if (current_level < NBLEVEL - 1) {
             current_level++;
-            initLevel();
+        } else {
+            current_level = 0;
         }
+        initLevel();
     }
 
     if (arduboy.justPressed(B_BUTTON)) {
         gameTick = &menuTitle;
         sound.toneMutesScore(false);
     }
-
 
     if (arduboy.justPressed(A_BUTTON)) {
         if (life == 0) {
@@ -830,50 +723,13 @@ void gameMain()
 
 void drawTilePixel(u8 x0, u8 y0, u8 z)
 {
-
-    // sprites.drawPlusMask(x0, y0, diamicon_plus_mask, z);
-
     sprites.drawSelfMasked(x0, y0, diamicon, z);
-
-
-/*
-    char cTile[12 * 6];
-
-    memcpy_P(cTile, global_tiles[z], 12 * 6);
-
-    u8 pos = 0;
-    u8 x, y;
-
-    u8 yz = y0;
-
-    for (y = 0; y < SIZE_Y; y++) {
-        u8 xz = x0;
-
-        for (x = 0; x < SIZE_X; x++) {
-
-            if (cTile[pos] == '.') {
-                // arduboy.drawPixel(xz, yz, BLACK);
-            } else {
-                arduboy.drawPixel(xz, yz, WHITE);
-            }
-
-            xz++;
-            pos++;
-        }
-        yz++;
-    }
-
-*/
-
 } // drawTilePixel
 
 
 void drawTile(u8 x0, u8 y0, u8 z)
 {
-
     drawTilePixel(x0 * SIZE_X + 2, y0 * SIZE_Y + 2, z);
-
-
 } // drawTile
 
 void draw()
@@ -882,9 +738,7 @@ void draw()
         drawTilePixel(101, 37, 1);
     } else {
         drawTilePixel(101, 37, current_col * 2 + 6);
-
     }
-
 
     u8 x, y;
 
