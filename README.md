@@ -21,3 +21,4 @@ Download the project and compile the ino version to your Arduboy.
 
 - [Animizer](http://animizer.net/en/gif-apng-assembler) - Online Gif animator
 - [Doug Cannon](http://www.oocities.org/doug_cannon/) - For the HP48 version of Diamonds
+- Diamonds are Forever was created by John Barry - midi version by jiji
