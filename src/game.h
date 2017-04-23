@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define DEBUG 1
+#define DEBUG 0
 
 #include <Arduboy2.h>
 #include <ArduboyPlaytune.h>
