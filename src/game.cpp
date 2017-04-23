@@ -551,54 +551,54 @@ void handleBall(void)
     //     3
     //    120
 
-    if (diamonds_mode == 0) {
+    // if (diamonds_mode == 0) {
 
 
-        if (arduboy.pressed(RIGHT_BUTTON)) {
-            if (pas_x <= 0) pas_x = 32;
-            pas_x++;
-            if (pas_x > 64) pas_x = 64;
-        } else if (arduboy.pressed(LEFT_BUTTON)) {
-            if (pas_x >= 0) pas_x = -32;
-            pas_x--;
-            if (pas_x < -64) pas_x = -64;
-        } else {
-            // if (pas_x > 0) pas_x = pas_x - (pas_x+1) / 2;
-            // if (pas_x < 0) pas_x = pas_x - (pas_x-1) / 2;
-            if (pas_x > 0) pas_x--;
-            if (pas_x < 0) pas_x++;
-        }
+    //     if (arduboy.pressed(RIGHT_BUTTON)) {
+    //         if (pas_x <= 0) pas_x = 16;
+    //         pas_x++;
+    //         if (pas_x > 32) pas_x = 32;
+    //     } else if (arduboy.pressed(LEFT_BUTTON)) {
+    //         if (pas_x >= 0) pas_x = -16;
+    //         pas_x--;
+    //         if (pas_x < -32) pas_x = -32;
+    //     } else {
+    //         // if (pas_x > 0) pas_x = pas_x - (pas_x+1) / 2;
+    //         // if (pas_x < 0) pas_x = pas_x - (pas_x-1) / 2;
+    //         if (pas_x > 0) pas_x--;
+    //         if (pas_x < 0) pas_x++;
+    //     }
 
 
-        if (arduboy.pressed(UP_BUTTON)) {
-            if (pas_y <= 0) pas_y = 32;
-            pas_y++;
-            if (pas_y > 64) pas_y = 64;
-        } else if (arduboy.pressed(DOWN_BUTTON)) {
-            if (pas_y >= 0) pas_y = -32;
-            pas_y--;
-            if (pas_y < -64) pas_y = -64;
-        } else {
-            // if (pas_y > 0) pas_y = pas_y - (pas_y+1) / 2;
-            // if (pas_y < 0) pas_y = pas_y - (pas_y-1) / 2;
-            if (pas_y > 0) pas_y--;
-            if (pas_y < 0) pas_y++;
-        }
+    //     if (arduboy.pressed(UP_BUTTON)) {
+    //         if (pas_y <= 0) pas_y = 32;
+    //         pas_y++;
+    //         if (pas_y > 64) pas_y = 64;
+    //     } else if (arduboy.pressed(DOWN_BUTTON)) {
+    //         if (pas_y >= 0) pas_y = -32;
+    //         pas_y--;
+    //         if (pas_y < -64) pas_y = -64;
+    //     } else {
+    //         // if (pas_y > 0) pas_y = pas_y - (pas_y+1) / 2;
+    //         // if (pas_y < 0) pas_y = pas_y - (pas_y-1) / 2;
+    //         if (pas_y > 0) pas_y--;
+    //         if (pas_y < 0) pas_y++;
+    //     }
 
-    } else {
+    // } else {
         if (arduboy.pressed(RIGHT_BUTTON)) {
             if (pas_x == 0) {
-                pas_x = 48;
+                pas_x = 24;
             } else if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
         } else if (arduboy.pressed(LEFT_BUTTON)) {
             if (pas_x == 0) {
-                pas_x = -48;
+                pas_x = -24;
             } else if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
         } else {
             if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
             if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
         }
-    }
+    // }
 
     if (TestMove((cur_x + pas_x) / 16, (cur_y + pas_y) / 16) == 1) {
         cur_x += pas_x;
