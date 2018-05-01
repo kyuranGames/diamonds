@@ -16,7 +16,6 @@ Download the project and compile the ino version to your Arduboy.
 
 .arduboy files will be released when we will not in beta anymore.
 
-
 ## Credits
 
 - [Animizer](http://animizer.net/en/gif-apng-assembler) - Online Gif animator

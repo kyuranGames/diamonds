@@ -1,6 +1,9 @@
 #include "game.h"
 #include "resources.h"
 
+#define DEFAULTPASX 12
+#define DEFAULTPASY 8
+
 void initLevel(void);
 
 #define NORM(x) (x > 0 ? x : -x);
@@ -66,7 +69,8 @@ static void gameMain();
 
 typedef void (*tick_func_t)();
 
-static tick_func_t gameTick {&menuTitle};
+//static tick_func_t gameTick {&menuTitle};
+static tick_func_t gameTick = &menuTitle;
 
 
 void tick()
@@ -498,11 +502,11 @@ void handleBall(void)
 
     if (arduboy.pressed(RIGHT_BUTTON)) {
         if (pas_x == 0) {
-            pas_x = 24;
+            pas_x = DEFAULTPASX;
         } else if (pas_x < 0) pas_x = pas_x - (pas_x - 1) / 2;
     } else if (arduboy.pressed(LEFT_BUTTON)) {
         if (pas_x == 0) {
-            pas_x = -24;
+            pas_x = -DEFAULTPASX;
         } else if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
     } else {
         if (pas_x > 0) pas_x = pas_x - (pas_x + 1) / 2;
@@ -599,9 +603,9 @@ void initLevel(void)
     cur_x = FieldBegin_x;
     cur_y = FieldBegin_y;
     if (FieldBegin_z == 1) {
-        pas_y = -16;
+        pas_y = -DEFAULTPASY;
     } else {
-        pas_y = 16;
+        pas_y = DEFAULTPASY;
     }
 
     bonus_time = FULLBONUS;
