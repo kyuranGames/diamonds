@@ -10,6 +10,12 @@ There are 50 levels included, and each one is an increasingly harder puzzle to s
 - Main ideas for Diamonds from Oliver Dreer's Macintosh Diamonds game. 
 - Graphics from the HP48 version of [Doug Cannon](http://www.oocities.org/doug_cannon/)
 
+## Play online
+
+Play online on [ProjectABE](https://felipemanga.github.io/ProjectABE/?url=https://raw.githubusercontent.com/kyuranGames/diamonds/master/arduboy/diamonds.hex)
+
+
+
 ## Build instruction
 
 Download the project and compile the ino version to your Arduboy.
